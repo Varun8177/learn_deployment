@@ -2,8 +2,50 @@ const express = require("express")
 const NoteModel = require("../models/note.model")
 const NotesRouter = express.Router()
 const jwt = require('jsonwebtoken');
+const auth = require("../middlewares/auth.middleware");
 
+NotesRouter.use(auth)
+/**
+* @swagger
+* components:
+*   schemas:
+*       Note:
+*           type: object
+*           properties:
+*               title:
+*                   type: string
+*                   description: The auto-generated id of the user
+*               body:
+*                   type: string
+*                   description: The user name
+*               subject:
+*                   type: string
+*                   description: The user email
+*/
 
+/**
+ * @swagger
+ * /notes/:
+ *   get:
+ *      tags: [Notes]
+ *      summary: This will get all the notes data of the user from the database
+ *      headers:
+ *          auth:
+ *              description: "Bearer <token>"
+ *              required: true
+ *              schema:
+ *                  type: string
+ *                  example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+ *      responses:
+ *          200:
+ *              description: The list of all the notes
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: "#/components/schemas/Note"
+*/
 NotesRouter.get("/", async (req, res) => {
     const { userId } = req.body
     const query = req.query

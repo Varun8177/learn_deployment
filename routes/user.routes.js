@@ -5,7 +5,45 @@ const bcrypt = require('bcrypt');
 const userRouter = express.Router()
 require("dotenv").config()
 
+/**
+* @swagger
+* components:
+*   schemas:
+*       User:
+*           type: object
+*           properties:
+*               email:
+*                   type: string
+*                   description: The auto-generated id of the user
+*               password:
+*                   type: string
+*                   description: The user name
+*               location:
+*                   type: string
+*                   description: The user email
+*               age:
+*                   type: integer
+*                   description: Age of the user
+*/
+
 // All users
+
+/**
+ * @swagger
+ * /users/:
+ *   get:
+ *      tags: [Users]
+ *      summary: This will get all the user data from the database
+ *      responses:
+ *          200:
+ *              description: The list of all the users
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: "#/components/schemas/User"
+*/
 userRouter.get("/", async (req, res) => {
     try {
         const users = await UserModel.find()
@@ -18,6 +56,30 @@ userRouter.get("/", async (req, res) => {
 })
 
 // Registration
+
+/**
+ * @swagger
+ * /users/register:
+ *  post:
+ *      tags: [Users]
+ *      summary: Register a user
+ *      description: This will register a new user to the database
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/User"
+ *      responses:
+ *          200:
+ *              description: User has been registered
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: "#/components/schemas/User"
+ */
 userRouter.post("/register", async (req, res) => {
     const { email, password, location, age } = req.body
     const users = await UserModel.findOne({ email })
@@ -51,6 +113,42 @@ userRouter.post("/register", async (req, res) => {
 })
 
 // Login
+
+/**
+ * @swagger
+ * /users/login:
+ *  post:
+ *      tags: [Users]
+ *      summary: Register a user
+ *      description: This will Login a user.
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          email:
+ *                              type: string
+ *                              description: email used while registering
+ *                          password: 
+ *                              type: string
+ *                              description: password used while registering           
+ *      responses:
+ *          200:
+ *              description: User has been registered
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              message: 
+ *                                  type: string
+ *                                  example: Login Successfull
+ *                              token: 
+ *                                  type: string
+ *                                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDIwNzdjZTM0YWUyYTMyYWU0NzU2NzciLCJpYXQiOjE2Nzk4NDk3Mjh9.i9kJY-UY4TZBza8Y4FKH7aypRH4m2eK0Je74pn"
+ */
 userRouter.post("/login", async (req, res) => {
     const { email, password } = req.body
     try {
@@ -60,7 +158,6 @@ userRouter.post("/login", async (req, res) => {
                 if (result) {
                     res.status(200).send({
                         "message": "Login Successfull",
-                        user,
                         "token": jwt.sign({ userId: user._id }, process.env.keyword)
                     })
                 } else {
@@ -82,13 +179,5 @@ userRouter.post("/login", async (req, res) => {
     }
 })
 
-userRouter.get("/movies", (req, res) => {
-    const token = req.headers.auth
-    jwt.verify(token, process.env.keyword, function (err, decoded) {
-        decoded ? res.status(200).send("Movies") : res.status(400).send({
-            "message": err.message
-        })
-    });
-})
 
 module.exports = userRouter
