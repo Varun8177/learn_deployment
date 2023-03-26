@@ -31,7 +31,7 @@ const options = {
         },
         servers: [
             {
-                url: "https://drab-puce-tortoise-shoe.cyclic.app/"
+                url: "https://drab-puce-tortoise-shoe.cyclic.app"
             }
         ]
     },
