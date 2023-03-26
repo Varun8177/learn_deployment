@@ -31,7 +31,7 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:8080"
+                url: "https://drab-puce-tortoise-shoe.cyclic.app/"
             }
         ]
     },
